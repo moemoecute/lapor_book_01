@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "981588467274",
+    "project_id": "capstone-uas",
+    "storage_bucket": "capstone-uas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981588467274:android:9630989333bd3a910090b3",
+        "android_client_info": {
+          "package_name": "com.example.tugas_uas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr9mFJsuiCoZNmc2JBTaECGb8A9gUV03c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
