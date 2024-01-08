@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:tugas_uas/components/vars.dart';
 import 'package:tugas_uas/models/akun.dart';
 import 'package:intl/intl.dart';
 import 'package:tugas_uas/components/styles.dart';
@@ -21,6 +22,8 @@ class ListItem extends StatefulWidget {
 }
 
 class _ListItemState extends State<ListItem> {
+  int likes = 0;
+
   // fungsi delete
   final _firestore = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
@@ -39,11 +42,30 @@ class _ListItemState extends State<ListItem> {
     }
   }
 
+  void countLike(String laporanId) async {
+    debugPrint("count like");
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection("likes")
+          .where('laporanId', isEqualTo: laporanId)
+          .get();
+
+      setState(() {
+        likes = querySnapshot.docs.length;
+      });
+    } catch (e) {
+      debugPrint("$e");
+      rethrow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    countLike(widget.laporan.docId);
+
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(width: 2),
+          border: Border.all(width: 5),
           borderRadius: BorderRadius.circular(10)),
       child: InkWell(
         onTap: () {
@@ -107,7 +129,11 @@ class _ListItemState extends State<ListItem> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                        color: warningColor,
+                        color: widget.laporan.status == 'Posted'
+                            ? warnaStatus[0]
+                            : widget.laporan.status == 'Process'
+                                ? warnaStatus[1]
+                                : warnaStatus[2],
                         borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(5),
                         ),
@@ -135,7 +161,23 @@ class _ListItemState extends State<ListItem> {
                       style: headerStyle(level: 5, dark: false),
                     ),
                   ),
-                )
+                ),
+                /*Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(5)),
+                        border: const Border.symmetric(
+                            vertical: BorderSide(width: 1))),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '$likes Likes',
+                      style: headerStyle(level: 5, dark: false),
+                    ),
+                  ),
+                )*/
               ],
             )
           ],

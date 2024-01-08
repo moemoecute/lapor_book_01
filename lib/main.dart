@@ -8,12 +8,13 @@ import 'package:tugas_uas/pages/dashboard/DashboardPage.dart';
 import 'package:tugas_uas/pages/LoginPage.dart';
 import 'package:tugas_uas/pages/RegisterPage.dart';
 
-Future<void> main() async {
+// Nama: Irham Johar Permana
+// NIM: A11.2020.12652
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(MaterialApp(
     title: 'Lapor Book',
     initialRoute: '/',
@@ -26,19 +27,4 @@ Future<void> main() async {
       '/detail': (context) => DetailPage(),
     },
   ));
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text(''),
-        ),
-      ),
-    );
-  }
 }

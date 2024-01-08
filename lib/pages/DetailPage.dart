@@ -1,22 +1,43 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-//import 'package:tugas_uas/components/komen_dialog.dart';
+import 'package:tugas_uas/components/like_button.dart';
+import 'package:tugas_uas/components/like_counter.dart';
 import 'package:tugas_uas/components/status_dialog.dart';
-import 'package:tugas_uas/components/styles.dart';
 import 'package:tugas_uas/models/akun.dart';
-import 'package:tugas_uas/models/laporan.dart';
 import 'package:intl/intl.dart';
+import 'package:tugas_uas/components/styles.dart';
+import 'package:tugas_uas/models/laporan.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage({super.key});
+  const DetailPage({super.key});
   @override
   State<StatefulWidget> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
   bool _isLoading = false;
+  int likes = 0;
 
-  String? status;
+  final _firestore = FirebaseFirestore.instance;
+
+  void countLike(String laporanId) async {
+    debugPrint("count like");
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection("likes")
+          .where('laporanId', isEqualTo: laporanId)
+          .get();
+
+      setState(() {
+        likes = querySnapshot.docs.length;
+      });
+    } catch (e) {
+      debugPrint("$e");
+      rethrow;
+    }
+  }
 
   Future launch(String uri) async {
     if (uri == '') return;
@@ -24,6 +45,8 @@ class _DetailPageState extends State<DetailPage> {
       throw Exception('Tidak dapat memanggil : $uri');
     }
   }
+
+  String? status;
 
   void statusDialog(Laporan laporan) {
     showDialog(
@@ -43,6 +66,7 @@ class _DetailPageState extends State<DetailPage> {
 
     Laporan laporan = arguments['laporan'];
     Akun akun = arguments['akun'];
+    countLike(laporan.docId);
 
     return Scaffold(
       appBar: AppBar(
@@ -88,6 +112,11 @@ class _DetailPageState extends State<DetailPage> {
                               laporan.instansi, Colors.white, Colors.black),
                         ],
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      LikeCounter(qty: likes),
+                      LikeButton(laporan: laporan),
                       const SizedBox(height: 20),
                       ListTile(
                         leading: Icon(Icons.person),
@@ -121,9 +150,10 @@ class _DetailPageState extends State<DetailPage> {
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         child: Text(laporan.deskripsi ?? ''),
                       ),
+                      SizedBox(height: 40),
                       if (akun.role == 'admin')
-                        Container(
-                          width: 250,
+                        SizedBox(
+                          width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
